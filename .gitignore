@@ -15,7 +15,6 @@ dist/
 
 # Cache and log files
 *.log
-*.json
 
 # Miscellaneous
 yarn.lock
@@ -26,7 +25,7 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
-# Build output (if you have any)
+# Build output
 build/
 
 # Environment files

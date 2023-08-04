@@ -1,26 +1,29 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import withAuthentication from './components/withAuthentication';
+import HomePage from './components/Home/HomePage';
+import LoginPage from './components/Login/LoginPage';
+import SignupPage from './components/Signup/SignupPage';
+import LibraryPage from './components/Library/LibraryPage';
+import CreateStoryPage from './components/CreateStory/CreateStoryPage';
+import AccountPage from './components/Account/AccountPage';
 
-function App() {
+const AuthenticatedLibraryPage = withAuthentication(LibraryPage);
+const AuthenticatedCreateStoryPage = withAuthentication(CreateStoryPage);
+const AuthenticatedAccountPage = withAuthentication(AccountPage);
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/library" element={<AuthenticatedLibraryPage />} />
+        <Route path="/create" element={<AuthenticatedCreateStoryPage />} />
+        <Route path="/account" element={<AuthenticatedAccountPage />} />
+        <Route path="*" element={<div>404 NOT FOUND</div>} />
+      </Routes>
+    </Router>
   );
 }
-
-export default App;

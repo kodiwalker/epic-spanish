@@ -17,7 +17,7 @@ const createTables = async () => {
         updated_at TIMESTAMP,
         first_name VARCHAR(50),
         last_name VARCHAR(50),
-        email VARCHAR(50),
+        email VARCHAR(50) UNIQUE,
         marketing_opted_in BOOLEAN,
         hashed_password VARCHAR(255),
         provider VARCHAR(50),
