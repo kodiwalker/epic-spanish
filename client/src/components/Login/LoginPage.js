@@ -34,7 +34,7 @@ const LoginPage = () => {
 
   return (
     <div>
-      <h1>Welcome to the Login Page!</h1>
+      <h1>Login</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleLogin}>
         <input
@@ -54,6 +54,7 @@ const LoginPage = () => {
         <button type="submit">Submit</button>
       </form>
 
+      <p>Not an Epic Spanish member yet?</p>
       <Link to="/signup">
         <button>Sign Up</button>
       </Link>

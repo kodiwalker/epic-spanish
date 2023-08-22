@@ -14,18 +14,16 @@ exports.authCheck = async (req, res) => {
 };
 
 exports.signup = async (req, res) => {
-  const { first_name, last_name, email, password = null, provider = null, provider_id = null, marketing_opted_in, proficiency_level, dialect, genre1, genre2 = null, genre3 = null } = req.body;
-  let hashed_password;
+  let hashed_password = null;
+
+  // Check if password is provided (i.e., not using OAuth)
+  if (req.body.password) {
+    hashed_password = await bcrypt.hash(req.body.password, 10);
+  }
+
+  const currentTime = new Date();
 
   try {
-    if (password !== null) {
-      hashed_password = await bcrypt.hash(password, 10);
-    } else {
-      hashed_password = null;
-    }
-
-    const currentTime = new Date();
-
     await db.none(`
       INSERT INTO Users (
         first_name, 
@@ -37,9 +35,6 @@ exports.signup = async (req, res) => {
         provider_id, 
         proficiency_level, 
         dialect, 
-        genre1, 
-        genre2, 
-        genre3, 
         created_at, 
         updated_at
       ) VALUES (
@@ -53,34 +48,33 @@ exports.signup = async (req, res) => {
         $8, 
         $9, 
         $10, 
-        $11, 
-        $12,
-        $13, 
-        $13
+        $10
       )
-    `, [first_name, last_name, email, marketing_opted_in, hashed_password, provider, provider_id, proficiency_level, dialect, genre1, genre2, genre3, currentTime]);
+    `, [req.body.first_name, req.body.last_name, req.body.email, req.body.marketing_opted_in, hashed_password, req.body.provider || null, req.body.provider_id || null, req.body.proficiency_level, req.body.dialect, currentTime]);
 
-    res.session.user = await db.oneOrNone('SELECT * FROM Users Where email = $1', [email]);
-    res.status(200).send('signup succeeded');
+    const user = await db.oneOrNone('SELECT * FROM Users Where email = $1', [req.body.email]);
+    const { id, email, first_name, last_name, dialect, marketing_opted_in, proficiency_level, subscription_tier, subscription_status, subscription_end_date } = user;
+    const sanitizedUser = { id, email, first_name, last_name, dialect, marketing_opted_in, proficiency_level, subscription_tier, subscription_status, subscription_end_date };
+
+    req.session.user = sanitizedUser;
+    res.status(200).json({ user: sanitizedUser });
 
   } catch (err) {
     if (err.code === '23505') { // unique_violation in PostgreSQL
-      res.status(409).json({ message: 'Email already exists' }); // 409 conflict error
+      res.status(409).json({ message: 'Email already exists.' }); // 409 conflict error
     } else {
       console.error('signup error:', err);
-      res.status(500).json({ message: 'Signup failed' });
+      res.status(500).json({ message: 'Server error, sign up failed.' });
     }
   }
-
 };
 
 
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email: inputEmail, password } = req.body;
 
   try {
-    const user = await db.oneOrNone('SELECT * FROM Users WHERE email = $1', [email]);
-    console.log(user)
+    const user = await db.oneOrNone('SELECT * FROM Users WHERE email = $1', [inputEmail]);
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }
@@ -90,9 +84,11 @@ exports.login = async (req, res) => {
       return res.status(403).json({ message: 'Incorrect password.' });
     }
 
-    // If the passwords do match, send a success message (and possibly a session token)
-    req.session.user = user;
-    res.status(200).json({ user });
+    const { id, email, first_name, last_name, dialect, marketing_opted_in, proficiency_level, subscription_tier, subscription_status, subscription_end_date } = user;
+    const sanitizedUser = { id, email, first_name, last_name, dialect, marketing_opted_in, proficiency_level, subscription_tier, subscription_status, subscription_end_date };
+
+    req.session.user = sanitizedUser;
+    res.status(200).json({ user: sanitizedUser });
 
   } catch (err) {
     console.error('Login error:', err);

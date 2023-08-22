@@ -9,12 +9,13 @@ export const useUser = () => {
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  console.log('UserProvider RAN')
 
   useEffect(() => {
     fetch('/authcheck')
       .then(res => res.json())
       .then(data => {
-        console.log('UserProvider RAN', data)
+        console.log('UserProvider UseEffect RAN', data)
         if (data.isAuthenticated && data.user) {
           setUser(data.user);
         }
