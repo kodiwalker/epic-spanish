@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { useUser } from '../../UserContext';
 import axios from 'axios';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-
+  const { user, login } = useUser();
   const navigate = useNavigate();
+
+  if (user) {
+    return <Navigate to="/account" replace />;
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const response = await axios.post('/login', { email, password });
       if (response.status === 200) {
-        // Login was successful
+        console.log(response.data.user)
+        login(response.data.user);
         navigate('/library');
       } else {
         // Handle other server responses here if needed

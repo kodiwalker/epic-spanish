@@ -5,12 +5,13 @@ require('dotenv').config();
 
 
 exports.authCheck = async (req, res) => {
-  if (req.session.user) {
-    res.status(200).json({ isAuthenticated: true });
+  if (req.session && req.session.user && req.session.user.id) {
+    const user = await db.oneOrNone('SELECT * FROM Users WHERE id = $1', [req.session.user.id]);
+    res.status(200).json({ isAuthenticated: true, user });
   } else {
     res.status(200).json({ isAuthenticated: false });
   }
-}
+};
 
 exports.signup = async (req, res) => {
   const { first_name, last_name, email, password = null, provider = null, provider_id = null, marketing_opted_in, proficiency_level, dialect, genre1, genre2 = null, genre3 = null } = req.body;
@@ -91,7 +92,7 @@ exports.login = async (req, res) => {
 
     // If the passwords do match, send a success message (and possibly a session token)
     req.session.user = user;
-    res.status(200).json({ message: 'Logged in successfully' });
+    res.status(200).json({ user });
 
   } catch (err) {
     console.error('Login error:', err);

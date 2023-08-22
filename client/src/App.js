@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import withAuthentication from './components/withAuthentication';
+import { UserProvider } from './UserContext';
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import HomePage from './components/Home/HomePage';
 import LoginPage from './components/Login/LoginPage';
 import SignupPage from './components/Signup/SignupPage';
@@ -9,22 +10,22 @@ import CreateStoryPage from './components/CreateStory/CreateStoryPage';
 import AccountPage from './components/Account/AccountPage';
 import ErrorPage from './components/ErrorPage';
 
-const AuthenticatedLibraryPage = withAuthentication(LibraryPage);
-const AuthenticatedCreateStoryPage = withAuthentication(CreateStoryPage);
-const AuthenticatedAccountPage = withAuthentication(AccountPage);
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/library" element={<AuthenticatedLibraryPage />} />
-        <Route path="/create" element={<AuthenticatedCreateStoryPage />} />
-        <Route path="/account" element={<AuthenticatedAccountPage />} />
-        <Route path="*" element={<ErrorPage />} />
-      </Routes>
-    </Router>
+    <UserProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/library" element={<ProtectedRoute element={<LibraryPage />} />} />
+          <Route path="/create" element={<ProtectedRoute element={<CreateStoryPage />} />} />
+          <Route path="/account" element={<ProtectedRoute element={<AccountPage />} />} />
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </Router>
+    </UserProvider>
   );
 }
+
