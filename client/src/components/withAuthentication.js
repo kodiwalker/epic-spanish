@@ -5,14 +5,15 @@ const withAuthentication = (WrappedComponent) => {
   return (props) => {
     const navigate = useNavigate();
 
-    const isAuthenticated = true; // replace this with actual authentication logic
-
-    // if user is not authenticated, redirect to login
     useEffect(() => {
-      if (!isAuthenticated) {
-        navigate('/');
-      }
-    }, [navigate, isAuthenticated]);
+      fetch('/authcheck')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.isAuthenticated) {
+            navigate('/');
+          }
+        });
+    }, [navigate]);
 
     return <WrappedComponent {...props} />;
   }

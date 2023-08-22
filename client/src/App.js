@@ -7,6 +7,7 @@ import SignupPage from './components/Signup/SignupPage';
 import LibraryPage from './components/Library/LibraryPage';
 import CreateStoryPage from './components/CreateStory/CreateStoryPage';
 import AccountPage from './components/Account/AccountPage';
+import ErrorPage from './components/ErrorPage';
 
 const AuthenticatedLibraryPage = withAuthentication(LibraryPage);
 const AuthenticatedCreateStoryPage = withAuthentication(CreateStoryPage);
@@ -22,7 +23,7 @@ export default function App() {
         <Route path="/library" element={<AuthenticatedLibraryPage />} />
         <Route path="/create" element={<AuthenticatedCreateStoryPage />} />
         <Route path="/account" element={<AuthenticatedAccountPage />} />
-        <Route path="*" element={<div>404 NOT FOUND</div>} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
   );
