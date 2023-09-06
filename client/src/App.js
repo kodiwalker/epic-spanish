@@ -8,6 +8,7 @@ import SignupPage from './components/Signup/SignupPage';
 import LibraryPage from './components/Library/LibraryPage';
 import CreateStoryPage from './components/CreateStory/CreateStoryPage';
 import AccountPage from './components/Account/AccountPage';
+import ReaderPage from "./components/Reader/ReaderPage";
 import ErrorPage from './components/ErrorPage';
 
 
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/library" element={<ProtectedRoute element={<LibraryPage />} />} />
           <Route path="/create" element={<ProtectedRoute element={<CreateStoryPage />} />} />
           <Route path="/account" element={<ProtectedRoute element={<AccountPage />} />} />
+          <Route path="/reader/:storyId" element={<ProtectedRoute element={<ReaderPage />} />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </Router>

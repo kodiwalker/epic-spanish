@@ -38,3 +38,4 @@ logs/
 # Miscellaneous
 yarn.lock
 package-lock.json
+gtranslatekey.json

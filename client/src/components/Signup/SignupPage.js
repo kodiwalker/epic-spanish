@@ -141,7 +141,7 @@ const SignupPage = () => {
           name="proficiency_level"
           onChange={handleFormChange}
         >
-          <option value="" selected disabled >Select your proficiency</option>
+          <option value="" defaultValue disabled >Select your proficiency</option>
           <option value="Super Beginner">Super Beginner (A1)</option>
           <option value="Beginner">Beginner (A2)</option>
           <option value="Intermediate">Intermediate (B1-B2)</option>
@@ -153,7 +153,7 @@ const SignupPage = () => {
           name="dialect"
           onChange={handleFormChange}
         >
-          <option value="" selected disabled >Select your dialect</option>
+          <option value="" defaultValue disabled >Select your dialect</option>
           <option value="Latin">Latin (US & Mexico)</option>
           <option value="Castillian">Castillian (Spain)</option>
         </select>
