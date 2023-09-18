@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/translate": "^8.0.1",
+    "aws-sdk": "^2.1460.0",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "connect-pg-simple": "^9.0.0",

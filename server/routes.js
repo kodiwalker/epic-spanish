@@ -9,7 +9,7 @@ router.post('/logout', logout);
 router.post('/signup', signup);
 router.get('/authcheck', authCheck);
 
-router.get('/stories/:userid', getStories)
+router.get('/stories', getStories)
 router.get('/story/:storyid', getStory)
 router.post('/stories/new', createStory)
 router.get('/translate/:word', translateWord)
