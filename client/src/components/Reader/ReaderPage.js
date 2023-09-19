@@ -22,7 +22,7 @@ const ReaderPage = () => {
         setStory(data.text);
         setStoryTitle(data.title);
         setMP3(data.mp3_url)
-
+        console.log(data)
         if (audioRef.current) {
           audioRef.current.play();
         }
@@ -63,7 +63,7 @@ const ReaderPage = () => {
     const word = titleElement.textContent;
     const position = {
       x: rect.left + (rect.width / 2),
-      y: rect.bottom  // This ensures the tooltip is displayed below the clicked title
+      y: rect.bottom + window.scrollY + 40
     };
     setTooltip({ word, position });
 
@@ -87,7 +87,7 @@ const ReaderPage = () => {
     // Adjusting the X position to be the center of the clicked word
     const position = {
       x: rect.left + (rect.width / 2),
-      y: rect.top  // This ensures the tooltip is displayed above the clicked word
+      y: rect.top + window.scrollY
     };
     setTooltip({ word, position });
 
@@ -112,7 +112,7 @@ const ReaderPage = () => {
   };
 
   return (
-    <div className="story-content">
+    <div className="story-content" style={{ margin: '2rem', lineHeight: '1.5rem', marginBottom: '5rem' }}>
       <h1>
         <span onClick={handleTitleClick}>
           {storyTitle}
@@ -162,7 +162,7 @@ const ReaderPage = () => {
         </>
       )}
 
-      <div style={{ position: 'fixed', bottom: '10px', width: '100%', padding: '10px', backgroundColor: '#f5f5f5' }}>
+      <div style={{ position: 'fixed', bottom: '0', left: '0', width: '100%', backgroundColor: '#f5f5f5' }}>
         {MP3 && (
           <audio ref={audioRef} controls style={{ width: '100%' }}>
             <source src={MP3} type="audio/mp3" />

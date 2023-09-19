@@ -8,7 +8,7 @@ module.exports = {
       },
       {
         "role": "user",
-        "content": "Please write a Spanish story with the following parameters. dialect: latin, read_time: 2-2.5 minutes, CEFR Proficiency level and description: A1/Super-Beginner = Use simple present tense and present progressive exclusively. Rely heavily on common, everyday vocabulary. Include basic, concrete actions (e.g., eating, walking). Use short sentences. Avoid passive voice, conditional, or subjunctive moods. Focus on immediate environments like the home, school, or local area. Limit the story to one main character or subject. Please use only the most common 200-300 words in the Spanish language."
+        "content": `Please write a Spanish story with the following parameters. dialect: latin, read_time: ${readTime}, CEFR Proficiency level and description: A1/Super-Beginner = Use simple present tense and present progressive exclusively. Rely heavily on common, everyday vocabulary. Include basic, concrete actions (e.g., eating, walking). Use short sentences. Avoid passive voice, conditional, or subjunctive moods. Focus on immediate environments like the home, school, or local area. Limit the story to one main character or subject. Please use only the most common 200-300 words in the Spanish language.`
       },
       {
         "role": "assistant",

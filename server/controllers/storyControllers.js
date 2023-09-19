@@ -31,7 +31,6 @@ exports.getStories = async (req, res) => {
 
 exports.getStory = async (req, res) => {
   const storyId = req.params.storyid;
-
   try {
     const storyQuery = `
       SELECT * FROM stories WHERE id = $1;
@@ -57,12 +56,28 @@ exports.getStory = async (req, res) => {
 
 
 exports.createStory = async (req, res) => {
-  //TODO res should include storyID (so ReaderPage can request it)
-
+  const readTime = req.body.readTime;
+  const genres = req.body.genres;
   const completion = await openai.chat.completions.create({
-    messages: prompts.beginner('latin', '2.5 minutes', 'horror'),
+    messages: prompts.beginner(req.session.user.dialect, readTime, genres.join(',')),
     model: "gpt-3.5-turbo",
   });
+
+  const checkPollyTaskStatus = async (taskId) => {
+    const params = {
+      TaskId: taskId
+    };
+
+    while (true) {
+      const statusResponse = await polly.getSpeechSynthesisTask(params).promise();
+      if (statusResponse.SynthesisTask.TaskStatus === 'completed') {
+        return statusResponse.SynthesisTask.OutputUri;
+      } else if (statusResponse.SynthesisTask.TaskStatus === 'failed') {
+        throw new Error('Polly synthesis task failed');
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  };
 
   let gptOutput = completion.choices[0].message.content;
   let titleMatch = gptOutput.match(/^([^\n]+)/);
@@ -84,24 +99,19 @@ exports.createStory = async (req, res) => {
 
   try {
     const pollyResponse = await polly.startSpeechSynthesisTask(params).promise();
-    const audioUrl = pollyResponse.SynthesisTask.OutputUri;
+    const audioUrl = await checkPollyTaskStatus(pollyResponse.SynthesisTask.TaskId);
 
-    const userId = 6;
-    const proficiencyLevel = 'beginner';
-    // const userId = req.session.user.id;
-    // const proficiencyLevel = req.session.user.proficiency_level;
+    const userId = req.session.user.id;
+    const proficiencyLevel = req.session.user.proficiency_level;
 
-    // Construct the database insertion query
     const insertQuery = `
-        INSERT INTO stories (user_id, created_at, title, text, proficiency_level, mp3_url, voice_name, word_count)
-        VALUES ($1, NOW(), $2, $3, $4, $5, $6, $7)
+        INSERT INTO stories (user_id, created_at, title, text, proficiency_level, mp3_url, voice_name, word_count, read_time)
+        VALUES ($1, NOW(), $2, $3, $4, $5, $6, $7, $8)
         RETURNING id;
     `;
 
-    // Execute the query and get the newly created story ID
-    const result = await db.one(insertQuery, [userId, title, words, proficiencyLevel, audioUrl, 'Penelope', words.length]);
+    const result = await db.one(insertQuery, [userId, title, words, proficiencyLevel, audioUrl, 'Penelope', words.length, readTime]);
 
-    // Return the newly created story ID to the client
     res.json(result.id);
   } catch (error) {
     console.error("Error:", error);
